@@ -1,0 +1,245 @@
+---
+title: "TerraclimateR"
+output: 
+  rmarkdown::html_vignette:
+    fig_width: 7
+    fig_height: 5
+    code_folding:  hide
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+The terraclimate data set^[Abatzoglou, J., Dobrowski, S., Parks, S. et al. TerraClimate, a high-resolution global dataset of monthly climate and climatic water balance from 1958–2015. Sci Data 5, 170191 (2018). https://doi.org/10.1038/sdata.2017.191] provides data on 14 climatic variables through time since 1958 at ~4km resolution in space and monthly resolution in time. TerraclimateR is a lightweight package that implements a single function (`get_terraclim`) to access these data and import them directly into R in long format.    
+
+<h3>General information:</h3>
+https://www.climatologylab.org/terraclimate.html
+
+<h3>Usage</h3>
+
+```{r class.source = "fold-show"}
+library(TerraclimateR)
+suppressPackageStartupMessages(library(tidyverse))
+```
+
+Input data (`df`) is required in the following format: a data.frame (or matrix) containing at least three variables (columns): a (unique) identifier, latitude, and longitude:
+
+```{r class.source = "fold-show"}
+
+df <- tidyr::tribble(
+  ~id,            ~lat,       ~lon,
+  "Vilcabamba",    -4.260641, -79.22274,
+  "Paracas",      -13.833881, -76.25046,
+  "Puerto Viejo",   9.656562, -82.75600,
+  "Trinidad",      21.808230, -79.98102,
+  "Cartagena",     10.172151, -75.74658
+)
+```
+
+To retrieve climatic data for these observations (rows), a character containing selected terraclimate variables is passed to the `clim_vars` argument (e.g. `c("aet", "def")`). The follwing variables are available: 
+
+<h3>Available terraclimate variables:</h3>
+| Code     | Variable                             | Detail                       | Unit     |
+|:---------|:-------------------------------------|:-----------------------------|:---------|
+| **aet**  | Actual Evapotranspiration            | monthly total                | $mm$     |
+| **def**  | Climate Water Deficit                | monthly total                | $mm$     |
+| **pet**  | Potential evapotranspiration         | monthly total                | $mm$     |
+| **ppt**  | Precipitation                        | monthly total                | $mm$     |
+| **q**    | Runoff                               | monthly total                | $mm$     |
+| **soil** | Soil Moisture                        | total column at end of month | $mm$     |
+| **srad** | Downward surface shortwave radiation |                              | $W/m^2$  |
+| **swe**  | Snow water equivalent                | at end of month              | $mm$     |
+| **tmax** | Max Temperature                      | average for month            | $C$      |
+| **tmin** | Min Temperature                      | average for month            | $C$      |
+| **vap**  | Vapor pressure                       | average for month            | $kPa$    |
+| **ws**   | Wind speed                           | average for month            | $m/s$    |
+| **vpd**  | Vapor Pressure Deficit               | average for month            | $kPa$    |
+| **PDSI** | Palmer Drought Severity Index        | at end of month              | unitless |
+ 
+To retrieve all of these variables, pass `climvars = "ALL"`.
+
+<hr><br>
+**Example:**
+
+Retrieving data for minimum temperature per month (*tmin*) and monthly precipitation (*ppt*):
+
+```{r class.source = "fold-show"}
+nc_df <- get_terraclim(df        = df,
+                       id_var    = id,
+                       lon_var   = lon,
+                       lat_var   = lat,
+                       clim_vars = c("tmin", "ppt"),
+                       show_prog = TRUE,
+                       conserve  = TRUE)
+```
+
+The column `id` is retained and still contains our sample identifiers. The column `year` contains values ranging from 1958, the start of the terraclimate data set, to the latest year for which data are available. `month` specifies the month, and `variable` indicates the terraclimate variable. `value` is the value of the respective variable at the given month in the given year at the given location. Because `conserve = TRUE` was set in the function call, all the columns of the initial data.frame are still present. If the data.frame contains a lot of variables and hundreds of observations, it is advisable to set `conserve = FALSE` since this results in a lot of redundant information and may slow down computation. Also, if column names *year*, *month*, *variable*, or *value* are in original data they will be renamed (e.g. *year* to *year.x* and *year.y*) to guarantee unique variable names. 
+Returning the data in long format facilitates further processing in a *tidy* style (see [tidy data](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)).
+
+```{r class.source = "fold-show"}
+str(nc_df)
+```
+
+Retrieving data for only one year:
+
+```{r class.source = "fold-show"}
+get_terraclim(df        = df[1, ],
+              id_var    = id,
+              lon_var   = lon,
+              lat_var   = lat,
+              clim_vars = "ppt",
+              show_prog = FALSE,
+              conserve  = FALSE,
+              year      = 2021)
+```
+
+Retrieving data for a range of years:
+
+```{r class.source = "fold-show"}
+nc_df_1990_2000 <- get_terraclim(df        = df[1, ],
+                                 id_var    = id,
+                                 lon_var   = lon,
+                                 lat_var   = lat,
+                                 clim_vars = "ppt",
+                                 show_prog = FALSE,
+                                 conserve  = FALSE) %>% 
+  dplyr::filter(year %in% 1990:2000)
+
+str(nc_df_1990_2000)
+```
+
+<hr><br>
+**NA Handling**
+
+Missing values, i.e., NA's, are not discarded by `get_terraclim`. 
+
+```{r class.source = "fold-show"}
+incomplete_df <- tribble(
+  ~id,            ~lat,       ~lon,
+  "Vilcabamba",    -4.260641, -79.22274,
+  NA,             -13.833881, -76.25046,
+  "Puerto Viejo",         NA, -82.75600,
+  "Trinidad",             NA,        NA,
+  NA,                     NA,        NA
+)
+```
+
+```{r class.source = "fold-show"}
+incomplete_nc_df <- get_terraclim(df        = incomplete_df,
+                                  id_var    = id,
+                                  lon_var   = lon,
+                                  lat_var   = lat,
+                                  clim_vars = c("tmin"),
+                                  conserve  = TRUE)
+
+incomplete_nc_df %>% group_by(id, lat, lon) %>% reframe(data_length = n())
+
+summary(incomplete_nc_df)
+```
+
+But exclusion of missing values is easy:
+
+```{r class.source = "fold-show"}
+incomplete_nc_df %>% drop_na() %>% summary()
+```
+
+<h3>Integration into *Tidy* Workflow</h3>
+<br>
+**Transformations (Examples)**
+
+```{r class.source = "fold-show"}
+nc_df %>% 
+  group_by(id, month, variable) %>% 
+  summarise(monthly_mean = mean(value), .groups = "drop") %>% 
+  pivot_wider(values_from = monthly_mean, names_from = variable)
+```
+
+```{r class.source = "fold-show"}
+nc_df %>% group_by(id, year, variable) %>% summarize(yearly_sum = sum(value), .groups = "drop")
+```
+
+<br>
+**Visualisation**
+
+It's always convenient to plot the data in order to quickly identify incorrect coordinates, e.g., inverted values.
+
+```{r}
+world_map <- ggplot2::map_data("world")
+
+dplyr::distinct(world_map, region) %>%
+  ggplot() +
+  geom_map(map = world_map, aes(map_id = region), 
+           fill = "gray90", color = "gray20", linewidth = 0.2) +
+  geom_point(data = df, mapping = aes(lon, lat), fill = "#3366ff", size = 3, shape = 21) +
+  geom_label(data = df %>% mutate(lon = case_when(id == "Puerto Viejo" ~ lon - 3, 
+                                                  id == "Cartagena" ~ lon + 3,
+                                                  .default = lon)), 
+             mapping = aes(lon, lat - 2.5, label = id)) +
+  expand_limits(x = c(min(df$lon) - 15, max(df$lon) + 15), 
+                y = c(min(df$lat) - 5, max(df$lat) + 5)) +
+  coord_equal(expand = FALSE) +
+  labs(x = "Longitude", y = "Latitude", title = "Geographic Locations of Observations") +
+  theme_linedraw() 
+```
+
+```{r}
+nc_df %>% filter(id == "Cartagena" & variable == "tmin") %>% 
+ggplot() +
+  aes(group = year, x = month, y = value, color = year) +
+  geom_line(linewidth = 1.5) +
+  scale_color_viridis_c(option = "rocket", name = "Year") +
+  labs(x = "Month", y = expression(Temp[min]~"[°C]"), title = "Yearly Course of Minimum Temperature in Cartagena, CO") +
+  theme_dark() +
+  theme(legend.key.height = unit(0.8, "in"))
+```
+
+```{r}
+nc_df %>% 
+  filter(id != "Paracas" & variable == "ppt") %>% 
+  group_by(id, variable, month) %>% 
+  summarise(monthly_mean = mean(value), se = sd(value)/sqrt(n()), .groups = "drop") %>% 
+  ggplot() +
+  geom_col(aes(x = month, y = monthly_mean, fill = id), color = "gray20") +
+  geom_errorbar(aes(x = month, ymin = monthly_mean - se, ymax = monthly_mean + se), 
+                color = "gray20", width = 0.3) +
+  facet_wrap(. ~ id) +
+  labs(x = "Month", y = "Precipitation [mm]", title = "Average Precipitation per Month") +
+  scale_fill_brewer(palette = "Set1") +
+  theme_classic() +
+  theme(legend.position = "none", strip.background = element_blank())
+```
+
+```{r}
+nc_df %>% 
+  filter(variable == "ppt") %>% 
+  group_by(id, variable, year) %>% 
+  summarise(yearly_sum = sum(value), .groups = "drop") %>% 
+  filter(id == "Vilcabamba") %>% 
+  ggplot() +
+  geom_smooth(aes(x = year, y = yearly_sum), 
+              color = "#3366ff", linewidth = 1.5, method = lm, formula = "y ~ x") +
+  geom_point(aes(x = year, y = yearly_sum), color = "gray20") +
+  geom_line(aes(x = year, y = yearly_sum), color = "gray20") +
+  labs(x = "Year", y = "Precipitation per Year [mm]", title = "Yearly Precipitation in Vilcabamba") +
+  theme_classic()
+```
+
+
+<h3>Additional Information</h3>
+
+There are currently two helper functions used internally in `TerraclimateR`. If you are interested you get further information:
+
+```{r class.source = "fold-show"}
+?TerraclimateR:::get_terraclim_single()
+
+?TerraclimateR:::show_progress()
+```
+
+<br>
+<br>
