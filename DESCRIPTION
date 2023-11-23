@@ -1,6 +1,6 @@
 Package: TerraclimateR
 Type: Package
-Title: Download Terraclimate Data in Tidy Format
+Title: Download TerraClimate Data in Tidy Format
 Version: 0.1.0
 Author: Julian Selke
 Maintainer: Julian Selke <juli4n.selke@gmail.com>
