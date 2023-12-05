@@ -9,9 +9,9 @@ https://www.climatologylab.org/terraclimate.html
 <h3>Installation</h3>
 
 ```
-devtools::install_github("julianselke/TerraclimateR", build_vignettes = TRUE)
+devtools::install_github("julianselke/TerraclimateR")
 # or
-remotes::install_github("julianselke/TerraclimateR", build_vignettes = TRUE)
+remotes::install_github("julianselke/TerraclimateR")
 
 library(TerraclimateR)
 
