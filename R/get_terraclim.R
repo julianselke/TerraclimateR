@@ -71,7 +71,7 @@
 #'                   lon_var = lon,
 #'                   lat_var = lat,
 #'                   clim_vars = c("tmin", "ppt"),
-#'                   show_proc = TRUE,
+#'                   show_prog = TRUE,
 #'                   conserve = TRUE)
 #'
 #'str(x)
