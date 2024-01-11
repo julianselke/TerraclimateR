@@ -15,7 +15,7 @@ remotes::install_github("julianselke/TerraclimateR")
 
 library(TerraclimateR)
 
-vignette("TerraclimateR")
+visit: https://julianselke.github.io/TerraclimateR/
 
 ?get_terraclim
 ```
