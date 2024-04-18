@@ -6,6 +6,9 @@ TerraclimateR is a lightweight package that implements a single function (`get_t
 <h3>General information</h3>
 https://www.climatologylab.org/terraclimate.html
 
+<h3>Vignette</h3>
+https://julianselke.github.io/TerraclimateR/
+
 <h3>Installation</h3>
 
 ```
@@ -14,8 +17,6 @@ devtools::install_github("julianselke/TerraclimateR")
 remotes::install_github("julianselke/TerraclimateR")
 
 library(TerraclimateR)
-
-visit: https://julianselke.github.io/TerraclimateR/
 
 ?get_terraclim
 ```
