@@ -78,7 +78,7 @@
 #'
 #'# calculate expected length
 #' clim_vars <- c("tmin", "ppt")
-#' (as.numeric(format(Sys.Date(), "%Y")) - 1958) * 12 * length(clim_vars) * nrow(df)
+#' (as.numeric(format(Sys.Date(), "%Y")) - 1950) * 12 * length(clim_vars) * nrow(df)
 #'
 get_terraclim <- function(df,
                           id_var,
@@ -126,7 +126,7 @@ get_terraclim <- function(df,
   if (!is.null(year)) {
     if (!is.numeric(year)) stop("year must be numeric")
     if (!is.integer(year)) year <- as.integer(year)
-    if (year < 1950) stop(sprintf("data records start in 1958 - no data available for year %s",
+    if (year < 1950) stop(sprintf("data records start in 1950 - no data available for year %s",
                                   year))
     current_year <- as.integer(format(Sys.Date(), "%Y"))
     if (year > current_year) stop(sprintf("no data available for the future (year %s)", year))
@@ -205,7 +205,7 @@ get_terraclim <- function(df,
         baseurlagg <- paste0("http://thredds.northwestknowledge.net:8080/",
                              "thredds/dodsC/agg_terraclimate_",
                              var_selection[i],
-                             "_1958_CurrentYear_GLOBE.nc")
+                             "_1950_CurrentYear_GLOBE.nc")
         nc <- RNetCDF::open.nc(baseurlagg)
       } else {
         baseurlagg <- paste0("http://thredds.northwestknowledge.net:8080/",
