@@ -1,6 +1,6 @@
 # TerraclimateR
 
-The terraclimate data set[^1] provides data on 14 climatic variables through time since 1958 at ~4km resolution in space and monthly resolution in time. 
+The terraclimate data set[^1] provides data on 14 climatic variables through time since 1950 at ~4km resolution in space and monthly resolution in time. 
 TerraclimateR is a lightweight package that implements a single function (`get_terraclim`) to access these data and import them directly into R in long format.
 
 <h3>General information</h3>
