@@ -14,7 +14,7 @@
 #' @param year numeric. If specified data are retrieved for this year only.
 #' @details If a coordinate has two or more equally distant data points in the
 #'  NetCDF file, the mean value of these 'nearest neighbors' is calculated.
-#' @return A vector of length (<year of latest records> - 1958 ) * 12. Values start at
+#' @return A vector of length (<year of latest records> - 1950 ) * 12. Values start at
 #' January 1958.
 #'
 #' @import RNetCDF
@@ -47,7 +47,7 @@ get_terraclim_single <- function(lat,
     baseurlagg <- paste0("http://thredds.northwestknowledge.net:8080/",
                          "thredds/dodsC/agg_terraclimate_",
                          clim_var,
-                         "_1958_CurrentYear_GLOBE.nc")
+                         "_1950_CurrentYear_GLOBE.nc")
     nc <- RNetCDF::open.nc(baseurlagg)
   }
   # extract data point coordinates
@@ -93,7 +93,7 @@ get_terraclim_single <- function(lat,
     if (is.null(year)) {
       res <- setNames(res,
                       paste(month.abb[rep(1:12, length(res)/12)],
-                            rep(1958:(1958 + length(res)/12 - 1), each = 12)
+                            rep(1950:(1950 + length(res)/12 - 1), each = 12)
                       )
       )
     } else {
