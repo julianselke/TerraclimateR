@@ -16,7 +16,7 @@ body {
 text-align: justify}
 </style>
 
-The terraclimate data set^[Abatzoglou, J., Dobrowski, S., Parks, S. et al. TerraClimate, a high-resolution global dataset of monthly climate and climatic water balance from 1958–2015. Sci Data 5, 170191 (2018). https://doi.org/10.1038/sdata.2017.191] provides data on 14 climatic variables through time since 1958 at ~4km resolution in space and monthly resolution in time. TerraclimateR is a lightweight package that implements a single function (`get_terraclim`) to access these data and import them directly into R in long format.    
+The terraclimate data set^[Abatzoglou, J., Dobrowski, S., Parks, S. et al. TerraClimate, a high-resolution global dataset of monthly climate and climatic water balance from 1958–2015. Sci Data 5, 170191 (2018). https://doi.org/10.1038/sdata.2017.191] provides data on 14 climatic variables through time since 1950 at ~4km resolution in space and monthly resolution in time. TerraclimateR is a lightweight package that implements a single function (`get_terraclim`) to access these data and import them directly into R in long format.    
 
 <h3>General information:</h3>
 https://www.climatologylab.org/terraclimate.html
@@ -79,7 +79,7 @@ nc_df <- get_terraclim(df        = df,
                        conserve  = TRUE)
 ```
 
-The column `id` is retained and still contains our sample identifiers. The column `year` contains values ranging from 1958, the start of the terraclimate data set, to the latest year for which data are available. `month` specifies the month, and `variable` indicates the terraclimate variable. `value` is the value of the respective variable at the given month in the given year at the given location. Because `conserve = TRUE` was set in the function call, all the columns of the initial data.frame are still present. If the data.frame contains a lot of variables and hundreds of observations, it is advisable to set `conserve = FALSE` since this results in a lot of redundant information and may slow down computation. Also, if column names *year*, *month*, *variable*, or *value* are in original data they will be renamed (e.g. *year* to *year.x* and *year.y*) to guarantee unique variable names. 
+The column `id` is retained and still contains our sample identifiers. The column `year` contains values ranging from 1950, the start of the terraclimate data set, to the latest year for which data are available. `month` specifies the month, and `variable` indicates the terraclimate variable. `value` is the value of the respective variable at the given month in the given year at the given location. Because `conserve = TRUE` was set in the function call, all the columns of the initial data.frame are still present. If the data.frame contains a lot of variables and hundreds of observations, it is advisable to set `conserve = FALSE` since this results in a lot of redundant information and may slow down computation. Also, if column names *year*, *month*, *variable*, or *value* are in original data they will be renamed (e.g. *year* to *year.x* and *year.y*) to guarantee unique variable names. 
 Returning the data in long format facilitates further processing in a *tidy* style (see [tidy data](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)).
 
 ```{r class.source = "fold-show"}
