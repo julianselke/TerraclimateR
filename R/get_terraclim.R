@@ -12,7 +12,7 @@
 #'
 #' The TerraClimate data set is extended on a yearly basis, which lead to a varying length of the
 #' returned data.frame. The expected length can be calculated by:
-#' \eqn{(year_{current} - 1958) * 12 * length_{clim\_var} * nrow_{df}}
+#' \eqn{(year_{current} - 1950) * 12 * length_{clim\_var} * nrow_{df}}
 #'
 #' When working with larger data sets it is advisable to set conserve = FALSE to reduce memory
 #' footprint. Retrieving all 14 TerraClimate variables (in 2023) for a data.frame with 200
@@ -126,7 +126,7 @@ get_terraclim <- function(df,
   if (!is.null(year)) {
     if (!is.numeric(year)) stop("year must be numeric")
     if (!is.integer(year)) year <- as.integer(year)
-    if (year < 1958) stop(sprintf("data records start in 1958 - no data available for year %s",
+    if (year < 1950) stop(sprintf("data records start in 1958 - no data available for year %s",
                                   year))
     current_year <- as.integer(format(Sys.Date(), "%Y"))
     if (year > current_year) stop(sprintf("no data available for the future (year %s)", year))
@@ -139,7 +139,7 @@ get_terraclim <- function(df,
     baseurlagg <- paste0("http://thredds.northwestknowledge.net:8080/",
                          "thredds/dodsC/agg_terraclimate_",
                          var_selection[1],
-                         "_1958_CurrentYear_GLOBE.nc")
+                         "_1950_CurrentYear_GLOBE.nc")
     nc <- RNetCDF::open.nc(baseurlagg)
   } else {
     tryCatch(
@@ -176,7 +176,7 @@ get_terraclim <- function(df,
   vs_length <- length(var_selection)
   # year and month ranges per sample and variable
   if (is.null(year)) {
-    res_years  <- rep(1958:(1958 + nc_length/12 - 1), each = 12)
+    res_years  <- rep(1950:(1950 + nc_length/12 - 1), each = 12)
   } else {
     res_years <- year
   }
