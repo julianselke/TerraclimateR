@@ -58,7 +58,7 @@ in the range of -180:180 for longitude and -90:90 for latitude.
 
 The TerraClimate data set is extended on a yearly basis, which lead to a varying length of the
 returned data.frame. The expected length can be calculated by: \
-\eqn{(year_{current} - 1958) * 12 * length_{clim\_var} * nrow_{df}}
+\eqn{(year_{current} - 1950) * 12 * length_{clim\_var} * nrow_{df}}
 
 When working with larger data sets it is advisable to set conserve = FALSE to reduce memory
 footprint. Retrieving all 14 TerraClimate variables (in 2023) for a data.frame with 200
