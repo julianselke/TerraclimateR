@@ -26,8 +26,8 @@ get_terraclim_single(
 Will be accessed online if none provided.}
 }
 \value{
-A vector of length (<year of latest records> - 1958 ) * 12. Values start at
-January 1958.
+A vector of length (<year of latest records> - 1950 ) * 12. Values start at
+January 1950.
 }
 \description{
 Load terraclimate data of specified climatic variable and extract information
