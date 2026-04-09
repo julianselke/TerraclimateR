@@ -15,7 +15,7 @@
 #' @details If a coordinate has two or more equally distant data points in the
 #'  NetCDF file, the mean value of these 'nearest neighbors' is calculated.
 #' @return A vector of length (<year of latest records> - 1950 ) * 12. Values start at
-#' January 1958.
+#' January 1950.
 #'
 #' @import RNetCDF
 #'
